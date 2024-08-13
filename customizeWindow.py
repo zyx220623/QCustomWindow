@@ -824,6 +824,25 @@ class CustomizeWindow(QPushButton):
             elif self.movemode == 2:
                 self.showSizeNormal()
                 self.move(event.globalPosition().toPoint() - self.mouse_click_position)
+            if QCursor.pos().y() <= 0 and self.__screen__.width() - 5 > QCursor.pos().x() > 5:
+                self.parent_name.will_max()
+            elif QCursor.pos().x() <= 5 and QCursor.pos().y() <= 5:
+                self.parent_name.will_up_left()
+            elif QCursor.pos().x() >= self.__screen__.width() - 5 and QCursor.pos().y() <= 5:
+                self.parent_name.will_up_right()
+            elif QCursor.pos().x() <= 5 and QCursor.pos().y() >= self.__screen__.height() - self.taskbar_height:
+                self.parent_name.will_down_left()
+            elif QCursor.pos().y() >= self.__screen__.height() - self.taskbar_height and \
+                    QCursor.pos().x() >= self.__screen__.width() - 5:
+                self.parent_name.will_down_right()
+            elif QCursor.pos().x() <= 5 <= QCursor.pos().y() <= self.__screen__.height() - 5:
+                self.parent_name.will_full_left()
+            elif QCursor.pos().x() >= self.__screen__.width() - 5 and \
+                    self.__screen__.height() - 5 >= QCursor.pos().y() >= 5:
+                self.parent_name.will_full_right()
+            else:
+                self.parent_name.will_close()
+
 
         event.accept()
 
@@ -874,6 +893,10 @@ class CustomizeWindow(QPushButton):
         if self.up_resized and self.size().height() + self.pos().y() - QCursor.pos().y() >= self.minimumHeight():
             self.resize(self._width_, self._height_ - QCursor.pos().y() + self.beginning_pos_y)
             self.move(self._x_, (event.globalPosition().toPoint() - self.up_click_position).y())
+            if QCursor.pos().y() <= 0 and QGuiApplication.primaryScreen().geometry().width() - 5 > QCursor.pos().x() > 5:
+                self.parent_name.will_lined()
+            else:
+                self.parent_name.will_close()
         event.accept()
 
     def __toUpReleaseEvent(self, event: QMouseEvent):
@@ -895,6 +918,11 @@ class CustomizeWindow(QPushButton):
     def __toDownMoveEvent(self, event: QMouseEvent):
         if self.toDownPress and QCursor.pos().y() >= self.minimumHeight() + self.pos().y():
             self.resize(self.size().width(), self._height_ + (QCursor.pos().y() - self.beginning_pos_y))
+            if QCursor.pos().y() >= self.__screen__.height() - self.taskbar_height and \
+                    5 <= QCursor.pos().x() <= self.__screen__.width() - self.edge:
+                self.parent_name.will_lined()
+            else:
+                self.parent_name.will_close()
         event.accept()
 
     def __toDownReleaseEvent(self, event: QMouseEvent):
