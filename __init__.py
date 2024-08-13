@@ -6,5 +6,5 @@ from sys import exit as sys_exit
 
 app = QApplication(argv)
 window = WindowBorder(Min=(400,225))
-window.show()
+window.showreal()
 sys_exit(app.exec())

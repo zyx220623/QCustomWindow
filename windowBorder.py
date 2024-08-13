@@ -17,14 +17,19 @@ from customizeWindow import CustomizeWindow
 class WindowBorder(QMainWindow):
     def __init__(self, parent: QWidget = None, Min: tuple[int, int] = (800, 450)):
         super(WindowBorder, self).__init__(parent=parent)
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        self.setWindowFlags(Qt.WindowType.Window |
+                            Qt.WindowType.FramelessWindowHint |
+                            Qt.WindowType.WindowSystemMenuHint |
+                            Qt.WindowType.WindowMinimizeButtonHint |
+                            Qt.WindowType.WindowMaximizeButtonHint |
+                            Qt.WindowType.WindowCloseButtonHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.Min = Min
         self.setBody()
 
     def setBody(self):
         self.__setGlass()
-        self.body = CustomizeWindow(self, title="FramelessWindow 示例", icon=QIcon("icon.png"),
+        self.body = CustomizeWindow(self, title="CustomizeWindow 示例", icon=QIcon("icon.png"),
                                     MinimumSize=QSize(self.Min[0], self.Min[1]))
 
     def showNormal(self):
@@ -32,6 +37,26 @@ class WindowBorder(QMainWindow):
 
     def showFullScreen(self):
         self.showMaximized()
+
+    def showMinimized(self):
+        if self.isMinimized():
+            self.showMaximized()
+            self.body.show()
+        else:
+            self.body.showMinimized()
+
+    def showMin(self):
+        super().showMinimized()
+
+    def showreal(self):
+        super().show()
+
+    def show(self):
+        if self.isMinimized():
+            self.showMaximized()
+            self.body.show()
+        else:
+            self.body.showMinimized()
 
     def __setGlass(self):
         self.glass = QPushButton(self)
@@ -113,3 +138,6 @@ class WindowBorder(QMainWindow):
             self.glass.setGeometry(-10, -10, 0, 0)
             self.glass.setWindowOpacity(0.5)
         __clo()
+
+    def will_normal(self):
+        self.__glass_setGeo(self.body.normal_geometry)

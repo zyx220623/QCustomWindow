@@ -87,6 +87,7 @@ class CustomizeWindow(QPushButton):
         self.normal_geometry = QRect(self.pos().x(), self.pos().y(), self.size().width(), self.size().height())
         self.parent_name.showMaximized()
         self.setWindowShadow()
+        self.__geo__ = self.geometry()
 
     def setWindowShadow(self):
         pass
@@ -303,6 +304,8 @@ class CustomizeWindow(QPushButton):
             self.__setNoneEvent()
             self.__setWindowStatusMenuOnMax()
             self.MoveableArea.mouseDoubleClickEvent = self.__titleDoubleClickedEvent
+            self.parent_name.will_close()
+            self.__geo__ = self.geometry()
 
         """自定义最大化方法"""
         self.parent_name.showMaximized()
@@ -320,10 +323,11 @@ class CustomizeWindow(QPushButton):
 
     def showMinimized(self):
         def __min():
-            self.parent_name.showMinimized()
+            self.parent_name.showMin()
             self.setGeometry(self.__geo__)
         def __min2():
             self.parent_name.setWindowOpacity(1)
+            self.parent_name.will_close()
 
         self.__geo__ = self.geometry()
         self.animation_group = QParallelAnimationGroup(self.parent_name)
@@ -350,6 +354,8 @@ class CustomizeWindow(QPushButton):
     def showLined(self):
         def __line():
             self.__setNoneEvent()
+            self.parent_name.will_close()
+            self.__geo__ = self.geometry()
         self.animation0 = QPropertyAnimation(self, b'geometry')
         self.animation0.setDuration(100)
         self.animation0.setStartValue(self.geometry())
@@ -360,6 +366,7 @@ class CustomizeWindow(QPushButton):
     def showNormal(self):
         def __nor():
             self.__setNormalEvent()
+            self.parent_name.will_close()
 
         self.MaximumButton.setIcon(QIcon("max.png"))
         self.animation0 = QPropertyAnimation(self, b'geometry')
@@ -368,11 +375,46 @@ class CustomizeWindow(QPushButton):
         self.animation0.setEndValue(self.normal_geometry)
         self.animation0.finished.connect(__nor)
         self.animation0.start()
+        self.__geo__ = self.geometry()
+
+    def send_close(self):
+        self.parent_name.will_close()
+
+    def getMinMessage(self):
+        def __min():
+            self.parent_name.showMinimized()
+            self.setGeometry(self.__geo__)
+        def __min2():
+            self.parent_name.setWindowOpacity(1)
+            self.parent_name.will_close()
+
+        self.__geo__ = self.geometry()
+        self.animation_group = QParallelAnimationGroup(self.parent_name)
+        self.setMinimumSize(0, 0)
+        self.animation0 = QPropertyAnimation(self, b'geometry')
+        self.animation0.setDuration(200)
+        self.animation0.setStartValue(self.geometry())
+        self.__position__ = self.pos()
+        self.__size__ = self.size()
+        self.animation0.setEndValue(QRect(QGuiApplication.primaryScreen().size().width() // 2 - 400,
+                                          QGuiApplication.primaryScreen().size().height(),
+                                          100,
+                                          62))
+        self.animation0.finished.connect(__min)
+        self.animation_group.addAnimation(self.animation0)
+        self.animation1 = QPropertyAnimation(self.parent_name, b'windowOpacity')
+        self.animation1.setDuration(200)
+        self.animation1.setStartValue(1)
+        self.animation1.setEndValue(0)
+        self.animation1.finished.connect(__min2)
+        self.animation_group.addAnimation(self.animation1)
+        self.animation_group.start()
 
     def showSizeNormal(self):
         def __nor():
-            self.resize(self.normal_geometry.width(), self.normal_geometry.height())
+            # self.resize(self.normal_geometry.width(), self.normal_geometry.height())
             self.__setNormalEvent()
+            self.parent_name.will_close()
 
         self.MaximumButton.setIcon(QIcon("max.png"))
         self.animation0 = QPropertyAnimation(self, b'size')
@@ -383,10 +425,13 @@ class CustomizeWindow(QPushButton):
         self.animation0.setEndValue(QSize(self.normal_geometry.width(), self.normal_geometry.height()))
         self.animation0.finished.connect(__nor)
         self.animation0.start()
+        self.__geo__ = self.geometry()
 
     def showUpLeft(self):
         def __cor():
             self.__setNoneEvent()
+            self.parent_name.will_close()
+            self.__geo__ = self.geometry()
 
         self.animation0 = QPropertyAnimation(self, b'geometry')
         self.animation0.setDuration(100)
@@ -399,6 +444,8 @@ class CustomizeWindow(QPushButton):
     def showFullLeft(self):
         def __side():
             self.__setNoneEvent()
+            self.parent_name.will_close()
+            self.__geo__ = self.geometry()
 
         self.animation0 = QPropertyAnimation(self, b'geometry')
         self.animation0.setDuration(100)
@@ -411,6 +458,8 @@ class CustomizeWindow(QPushButton):
     def showDownLeft(self):
         def __cor():
             self.__setNoneEvent()
+            self.parent_name.will_close()
+            self.__geo__ = self.geometry()
 
         self.animation0 = QPropertyAnimation(self, b'geometry')
         self.animation0.setDuration(100)
@@ -424,6 +473,8 @@ class CustomizeWindow(QPushButton):
     def showUpRight(self):
         def __cor():
             self.__setNoneEvent()
+            self.parent_name.will_close()
+            self.__geo__ = self.geometry()
 
         self.animation0 = QPropertyAnimation(self, b'geometry')
         self.animation0.setDuration(100)
@@ -437,6 +488,8 @@ class CustomizeWindow(QPushButton):
     def showDownRight(self):
         def __cor():
             self.__setNoneEvent()
+            self.parent_name.will_close()
+            self.__geo__ = self.geometry()
 
         self.animation0 = QPropertyAnimation(self, b'geometry')
         self.animation0.setDuration(100)
@@ -451,6 +504,8 @@ class CustomizeWindow(QPushButton):
     def showFullRight(self):
         def __side():
             self.__setNoneEvent()
+            self.parent_name.will_close()
+            self.__geo__ = self.geometry()
 
         self.animation0 = QPropertyAnimation(self, b'geometry')
         self.animation0.setDuration(100)
@@ -795,6 +850,7 @@ class CustomizeWindow(QPushButton):
                 self.movemode = 4
             elif self.__isLined():
                 self.movemode = 2
+                self.__width__ = self.size().width()
             else:
                 self.movemode = 0
         event.accept()
@@ -823,7 +879,8 @@ class CustomizeWindow(QPushButton):
                     (event.globalPosition().toPoint() - self.mouse_click_position).y())
             elif self.movemode == 2:
                 self.showSizeNormal()
-                self.move(event.globalPosition().toPoint() - self.mouse_click_position)
+                self.move(event.globalPosition().toPoint().x() - self.mouse_click_position.x() * self.normal_geometry.width() // self.__width__,
+                          (event.globalPosition().toPoint() - self.mouse_click_position).y())
             if QCursor.pos().y() <= 0 and self.__screen__.width() - 5 > QCursor.pos().x() > 5:
                 self.parent_name.will_max()
             elif QCursor.pos().x() <= 5 and QCursor.pos().y() <= 5:
@@ -840,6 +897,8 @@ class CustomizeWindow(QPushButton):
             elif QCursor.pos().x() >= self.__screen__.width() - 5 and \
                     self.__screen__.height() - 5 >= QCursor.pos().y() >= 5:
                 self.parent_name.will_full_right()
+            elif QCursor.pos().y() >= self.__screen__.height() - self.taskbar_height and 5 <= QCursor.pos().x() <= self.__screen__.width() - 5:
+                self.parent_name.will_normal()
             else:
                 self.parent_name.will_close()
 
@@ -923,6 +982,8 @@ class CustomizeWindow(QPushButton):
                 self.parent_name.will_lined()
             else:
                 self.parent_name.will_close()
+        if self.toDownPress:
+            self.__moveResetEvent()
         event.accept()
 
     def __toDownReleaseEvent(self, event: QMouseEvent):
@@ -994,12 +1055,21 @@ class CustomizeWindow(QPushButton):
             self.resize(self.size().width(),
                         self._height_ - QCursor.pos().y() + self.beginning_pos.y())
             self.move(self.pos().x(), (event.globalPosition().toPoint() - self.upleft_click_position).y())
+        if self.upleft_resized:
+            if QCursor.pos().y() <= 0 and QGuiApplication.primaryScreen().geometry().width() - 5 > QCursor.pos().x() > 5:
+                self.parent_name.will_lined()
+            else:
+                self.parent_name.will_close()
         event.accept()
 
     def __UpLeftReleaseEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
+            self.parent_name.will_close()
             self.upleft_resized = False
-            self.normal_geometry = QRect(self.pos().x(), self.pos().y(), self.size().width(), self.size().height())
+            if QCursor.pos().y() <= 0 and QGuiApplication.primaryScreen().geometry().width() - 5 > QCursor.pos().x() > 5:
+                self.showLined()
+            else:
+                self.normal_geometry = QRect(self.pos().x(), self.pos().y(), self.size().width(), self.size().height())
         event.accept()
 
     def __setUpRightArea(self):
@@ -1033,12 +1103,21 @@ class CustomizeWindow(QPushButton):
         if self.upright_resized and self.pos().y() + self.size().height() - QCursor.pos().y() >= self.minimumHeight():
             self.resize(self.width(), self._height_ - QCursor.pos().y() + self.beginning_pos_up.y())
             self.move(self._x_, (event.globalPosition().toPoint() - self.upleft_click_position).y())
+        if self.upright_resized:
+            if QCursor.pos().y() <= 0 and QGuiApplication.primaryScreen().geometry().width() - 5 > QCursor.pos().x() > 5:
+                self.parent_name.will_lined()
+            else:
+                self.parent_name.will_close()
         event.accept()
 
     def __UpRightReleaseEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
+            self.parent_name.will_close()
             self.upright_resized = False
-            self.normal_geometry = QRect(self.pos().x(), self.pos().y(), self.size().width(), self.size().height())
+            if QCursor.pos().y() <= 0 and QGuiApplication.primaryScreen().geometry().width() - 5 > QCursor.pos().x() > 5:
+                self.showLined()
+            else:
+                self.normal_geometry = QRect(self.pos().x(), self.pos().y(), self.size().width(), self.size().height())
         event.accept()
 
     def __setDownRightArea(self):
@@ -1073,12 +1152,24 @@ class CustomizeWindow(QPushButton):
             self.resize(self.size().width(), self._height_ + (QCursor.pos().y() - self.beginning_pos_down.y()))
         if self.downright_resized and QCursor.pos().x() >= self.pos().x() + self.minimumWidth() - self.edge:
             self.resize(self._width_ + (QCursor.pos().x() - self.beginning_pos_right.x()), self.size().height())
+        if self.downright_resized:
+            self.__moveResetEvent()
+            if QCursor.pos().y() >= self.__screen__.height() - self.taskbar_height and \
+                    5 <= QCursor.pos().x() <= self.__screen__.width() - self.edge:
+                self.parent_name.will_lined()
+            else:
+                self.parent_name.will_close()
         event.accept()
 
     def __DownRightReleaseEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
+            self.parent_name.will_close()
             self.downright_resized = False
-            self.normal_geometry = QRect(self.pos().x(), self.pos().y(), self.size().width(), self.size().height())
+            if QCursor.pos().y() >= self.__screen__.height() - self.taskbar_height and \
+                    5 <= QCursor.pos().x() <= self.__screen__.width() - self.edge:
+                self.showLined()
+            else:
+                self.normal_geometry = QRect(self.pos().x(), self.pos().y(), self.size().width(), self.size().height())
         event.accept()
 
     def __setDownLeftArea(self):
@@ -1113,10 +1204,22 @@ class CustomizeWindow(QPushButton):
         if self.downleft_resized and self.pos().x() + self.size().width() - QCursor.pos().x() >= self.minimumWidth():
             self.resize(self._width_ - QCursor.pos().x() + self.beginning_pos_left.x(), self.size().height())
             self.move((event.globalPosition().toPoint() - self.upleft_click_position).x(), self._y_)
+        if self.downleft_resized:
+            self.__moveResetEvent()
+            if QCursor.pos().y() >= self.__screen__.height() - self.taskbar_height and \
+                    5 <= QCursor.pos().x() <= self.__screen__.width() - self.edge:
+                self.parent_name.will_lined()
+            else:
+                self.parent_name.will_close()
         event.accept()
 
     def __DownLeftReleaseEvent(self, event: QMouseEvent):
         if event.button() == Qt.MouseButton.LeftButton:
+            self.parent_name.will_close()
             self.downleft_resized = False
-            self.normal_geometry = QRect(self.pos().x(), self.pos().y(), self.size().width(), self.size().height())
+            if QCursor.pos().y() >= self.__screen__.height() - self.taskbar_height and \
+                    5 <= QCursor.pos().x() <= self.__screen__.width() - self.edge:
+                self.showLined()
+            else:
+                self.normal_geometry = QRect(self.pos().x(), self.pos().y(), self.size().width(), self.size().height())
         event.accept()
